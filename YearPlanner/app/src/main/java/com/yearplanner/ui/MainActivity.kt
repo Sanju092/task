@@ -3,15 +3,17 @@ package com.yearplanner.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.lifecycle.viewmodel.ViewModel
-import androidx.lifecycle.viewmodel.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.yearplanner.ui.navigation.AppNavHost
 import com.yearplanner.ui.theme.Theme
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -52,6 +54,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@HiltViewModel
 class MainViewModel @Inject constructor(
     private val taskUseCases: com.yearplanner.domain.usecase.TaskUseCases
 ) : ViewModel() {

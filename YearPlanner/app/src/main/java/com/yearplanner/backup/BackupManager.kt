@@ -6,6 +6,7 @@ import android.util.Log
 import com.yearplanner.data.model.*
 import com.yearplanner.data.repository.TaskRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -286,8 +287,8 @@ class BackupManager(private val context: Context, private val repository: TaskRe
                     
                     // Parse dates
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    val plannedDate = plannedDateStr.ifBlank { null }?.let { dateFormat.parse(it).time }
-                    val deadlineDate = deadlineDateStr.ifBlank { null }?.let { dateFormat.parse(it).time }
+                    val plannedDate = plannedDateStr.ifBlank { null }?.let { dateFormat.parse(it)?.time }
+                    val deadlineDate = deadlineDateStr.ifBlank { null }?.let { dateFormat.parse(it)?.time }
                     
                     val plannedMonth = plannedMonthStr.toIntOrNull()
                     val plannedYear = plannedYearStr.toIntOrNull()

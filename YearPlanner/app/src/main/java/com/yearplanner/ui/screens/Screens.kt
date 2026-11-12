@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package com.yearplanner.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
@@ -163,7 +165,7 @@ fun YearScreen(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(1..12) { month ->
+                items((1..12).toList()) { month ->
                     val monthSummary = summary.months[month]
                     MonthSummaryCard(
                         month = month,
@@ -486,7 +488,7 @@ fun EmptyState(title: String, subtitle: String) {
 fun MonthSummaryCard(
     month: Int,
     year: Int,
-    summary: com.yearplanner.ui.screens.MonthSummary?,
+    summary: com.yearplanner.data.repository.MonthSummary?,
     onClick: () -> Unit
 ) {
     val monthName = java.time.Month.of(month).getDisplayName(java.time.format.TextStyle.SHORT, Locale.getDefault())

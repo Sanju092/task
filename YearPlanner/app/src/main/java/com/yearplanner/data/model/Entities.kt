@@ -4,9 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.yearplanner.data.db.converters.Converters
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.ZoneId
+import java.time.ZoneId
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
@@ -76,7 +74,7 @@ data class TaskOccurrence(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val taskId: String,
     val seriesId: String? = null,
-    val originalOccurrenceKey: String, // Stable key: seriesId + date pattern
+    val originalOccurrenceKey: String = UUID.randomUUID().toString(), // Stable key: seriesId + date pattern
     val planningPrecision: PlanningPrecision,
     val plannedDate: Long? = null, // For DAY precision
     val plannedMonth: Int? = null, // 1-12 for MONTH precision
@@ -90,7 +88,8 @@ data class TaskOccurrence(
     val sortOrder: Int = 0,
     val version: Int = 1,
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    val title: String = ""
 )
 
 @Serializable

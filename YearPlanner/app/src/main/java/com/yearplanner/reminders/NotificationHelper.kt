@@ -37,6 +37,7 @@ object NotificationHelper {
         }
     }
 
+    @android.annotation.SuppressLint("MissingPermission")
     fun postReminderNotification(
         context: Context,
         reminderId: String,

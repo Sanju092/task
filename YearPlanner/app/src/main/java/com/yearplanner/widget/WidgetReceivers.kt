@@ -16,7 +16,7 @@ import androidx.glance.unit.dp
 import androidx.glance.unit.sp
 import com.yearplanner.data.model.WidgetKind
 
-abstract class BaseWidgetReceiver(widgetKind: WidgetKind) : GlanceAppWidgetReceiver() {
+abstract class BaseWidgetReceiver(private val widgetKind: WidgetKind) : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget
         get() = when (widgetKind) {
             WidgetKind.TODAY -> TodayWidget()

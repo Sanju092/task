@@ -202,6 +202,20 @@ class TaskRepository(private val database: YearPlannerDatabase) {
             true
         }
     }
+
+    companion object {
+        @Volatile
+        private var instance: TaskRepository? = null
+
+        fun getInstance(context: android.content.Context): TaskRepository {
+            return instance ?: synchronized(this) {
+                val db = com.yearplanner.data.db.YearPlannerDatabase.getInstance(context)
+                val repo = TaskRepository(db)
+                instance = repo
+                repo
+            }
+        }
+    }
 }
 
 data class MonthSummary(

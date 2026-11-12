@@ -1,9 +1,9 @@
 package com.yearplanner.domain.recurrence
 
 import com.yearplanner.data.model.*
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.ZoneId
-import kotlinx.datetime.Instant
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -15,7 +15,7 @@ class RecurrenceGeneratorTest {
             taskId = "task1",
             frequency = RecurrenceFrequency.DAILY,
             interval = 1,
-            anchorDate = Instant.parse("2025-01-01T00:00:00Z").toEpochMilliseconds(),
+            anchorDate = Instant.parse("2025-01-01T00:00:00Z").toEpochMilli(),
             zoneId = ZoneId.systemDefault().id
         )
         
@@ -25,8 +25,8 @@ class RecurrenceGeneratorTest {
         val occurrences = RecurrenceGenerator.generateOccurrences(series, task, 2025, 1, existing)
         
         assertEquals(31, occurrences.size) // January has 31 days
-        assertEquals(LocalDate(2025, 1, 1), occurrences[0].plannedDate?.let { Instant.ofEpochMilliseconds(it).atZone(ZoneId.systemDefault()).toLocalDate() })
-        assertEquals(LocalDate(2025, 1, 31), occurrences[30].plannedDate?.let { Instant.ofEpochMilliseconds(it).atZone(ZoneId.systemDefault()).toLocalDate() })
+        assertEquals(LocalDate.of(2025, 1, 1), occurrences[0].plannedDate?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() })
+        assertEquals(LocalDate.of(2025, 1, 31), occurrences[30].plannedDate?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() })
     }
 
     @Test
@@ -35,7 +35,7 @@ class RecurrenceGeneratorTest {
             taskId = "task1",
             frequency = RecurrenceFrequency.WEEKLY,
             interval = 1,
-            anchorDate = Instant.parse("2025-01-01T00:00:00Z").toEpochMilliseconds(), // Wednesday
+            anchorDate = Instant.parse("2025-01-01T00:00:00Z").toEpochMilli(), // Wednesday
             zoneId = ZoneId.systemDefault().id
         )
         
@@ -55,7 +55,7 @@ class RecurrenceGeneratorTest {
             frequency = RecurrenceFrequency.MONTHLY,
             interval = 1,
             monthDay = 15,
-            anchorDate = Instant.parse("2025-01-15T00:00:00Z").toEpochMilliseconds(),
+            anchorDate = Instant.parse("2025-01-15T00:00:00Z").toEpochMilli(),
             zoneId = ZoneId.systemDefault().id
         )
         
@@ -66,7 +66,7 @@ class RecurrenceGeneratorTest {
         
         assertEquals(12, occurrences.size) // 12 months
         occurrences.forEach { occ ->
-            val date = Instant.ofEpochMilliseconds(occ.plannedDate!!).atZone(ZoneId.systemDefault()).toLocalDate()
+            val date = Instant.ofEpochMilli(occ.plannedDate!!).atZone(ZoneId.systemDefault()).toLocalDate()
             assertEquals(15, date.dayOfMonth)
         }
     }
@@ -77,7 +77,7 @@ class RecurrenceGeneratorTest {
             taskId = "task1",
             frequency = RecurrenceFrequency.YEARLY,
             interval = 1,
-            anchorDate = Instant.parse("2025-06-15T00:00:00Z").toEpochMilliseconds(),
+            anchorDate = Instant.parse("2025-06-15T00:00:00Z").toEpochMilli(),
             zoneId = ZoneId.systemDefault().id
         )
         
@@ -87,8 +87,8 @@ class RecurrenceGeneratorTest {
         val occurrences = RecurrenceGenerator.generateOccurrences(series, task, 2025, null, existing)
         
         assertEquals(1, occurrences.size)
-        val date = Instant.ofEpochMilliseconds(occurrences[0].plannedDate!!).atZone(ZoneId.systemDefault()).toLocalDate()
-        assertEquals(6, date.monthNumber)
+        val date = Instant.ofEpochMilli(occurrences[0].plannedDate!!).atZone(ZoneId.systemDefault()).toLocalDate()
+        assertEquals(6, date.monthValue)
         assertEquals(15, date.dayOfMonth)
     }
 
@@ -99,7 +99,7 @@ class RecurrenceGeneratorTest {
             frequency = RecurrenceFrequency.WEEKDAYS,
             interval = 1,
             weekDays = 1 or 2 or 4 or 8 or 16, // Mon-Fri
-            anchorDate = Instant.parse("2025-01-01T00:00:00Z").toEpochMilliseconds(), // Wednesday
+            anchorDate = Instant.parse("2025-01-01T00:00:00Z").toEpochMilli(), // Wednesday
             zoneId = ZoneId.systemDefault().id
         )
         
@@ -111,8 +111,8 @@ class RecurrenceGeneratorTest {
         // January 2025 has 23 weekdays (Mon-Fri)
         assertEquals(23, occurrences.size)
         occurrences.forEach { occ ->
-            val date = Instant.ofEpochMilliseconds(occ.plannedDate!!).atZone(ZoneId.systemDefault()).toLocalDate()
-            val dayOfWeek = date.dayOfWeek // 1=Mon ... 7=Sun
+            val date = Instant.ofEpochMilli(occ.plannedDate!!).atZone(ZoneId.systemDefault()).toLocalDate()
+            val dayOfWeek = date.dayOfWeek.value // 1=Mon ... 7=Sun
             assertTrue(dayOfWeek >= 1 && dayOfWeek <= 5)
         }
     }
@@ -124,7 +124,7 @@ class RecurrenceGeneratorTest {
             taskId = "task1",
             frequency = RecurrenceFrequency.YEARLY,
             interval = 1,
-            anchorDate = Instant.parse("2024-02-29T00:00:00Z").toEpochMilliseconds(),
+            anchorDate = Instant.parse("2024-02-29T00:00:00Z").toEpochMilli(),
             zoneId = ZoneId.systemDefault().id
         )
         
@@ -138,8 +138,8 @@ class RecurrenceGeneratorTest {
         assertEquals(1, occurrences2025.size)
         
         // 2025 is not a leap year, should fall back to Feb 28
-        val date2025 = Instant.ofEpochMilliseconds(occurrences2025[0].plannedDate!!).atZone(ZoneId.systemDefault()).toLocalDate()
-        assertEquals(2, date2025.monthNumber)
+        val date2025 = Instant.ofEpochMilli(occurrences2025[0].plannedDate!!).atZone(ZoneId.systemDefault()).toLocalDate()
+        assertEquals(2, date2025.monthValue)
         assertEquals(28, date2025.dayOfMonth)
     }
 
@@ -149,11 +149,11 @@ class RecurrenceGeneratorTest {
             id = "series1",
             taskId = "task1",
             frequency = RecurrenceFrequency.DAILY,
-            anchorDate = Instant.parse("2025-01-01T00:00:00Z").toEpochMilliseconds(),
+            anchorDate = Instant.parse("2025-01-01T00:00:00Z").toEpochMilli(),
             zoneId = ZoneId.systemDefault().id
         )
         
-        val date = LocalDate(2025, 1, 15)
+        val date = LocalDate.of(2025, 1, 15)
         val key = RecurrenceGenerator.generateOccurrenceKey(series, date)
         
         assertEquals("series1_2025_1_15", key)

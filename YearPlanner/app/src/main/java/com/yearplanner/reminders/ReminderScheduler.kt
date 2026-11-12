@@ -12,6 +12,7 @@ import com.yearplanner.data.model.ReminderPrecision
 import com.yearplanner.data.repository.TaskRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -111,7 +112,7 @@ class ReminderScheduler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val now = System.currentTimeMillis()
-                val horizon = now + (30 * 24 * 60 * 60 * 1000) // 30 days ahead
+                val horizon = now + (30L * 24 * 60 * 60 * 1000L) // 30 days ahead
                 
                 val dueReminders = repository.getDueReminders(horizon).first()
                 
@@ -211,19 +212,6 @@ class BootReceiver : android.content.BroadcastReceiver() {
             // Reschedule reminders
             val scheduler = ReminderScheduler(context, TaskRepository.getInstance(context))
             scheduler.rescheduleAllReminders()
-        }
-    }
-}
-
-companion object {
-    private var instance: TaskRepository? = null
-    
-    fun getInstance(context: Context): TaskRepository {
-        return instance ?: synchronized(this) {
-            val db = com.yearplanner.data.db.YearPlannerDatabase.getInstance(context)
-            val repo = TaskRepository(db)
-            instance = repo
-            repo
         }
     }
 }

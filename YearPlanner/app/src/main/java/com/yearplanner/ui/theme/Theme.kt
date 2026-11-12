@@ -55,22 +55,25 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun Theme(
-    darkTheme: Boolean = androidx.compose.material3.isSystemInDarkTheme(),
+    darkTheme: Boolean = androidx.compose.foundation.isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val view = LocalView.current
     
-    SideEffect {
-        val window = (view.context as androidx.appcompat.app.AppCompatActivity).window
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = colorScheme.surfaceContainer.toArgb()
-        window.navigationBarColor = colorScheme.surface.toArgb()
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as? android.app.Activity)?.window
+            if (window != null) {
+                WindowCompat.setDecorFitsSystemWindows(window, false)
+                window.statusBarColor = colorScheme.surfaceContainer.toArgb()
+                window.navigationBarColor = colorScheme.surface.toArgb()
+            }
+        }
     }
     
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
         content = content
     )
 }

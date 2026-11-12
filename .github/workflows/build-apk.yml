@@ -66,5 +66,6 @@ jobs:
         with:
           name: test-results-${{ github.run_number }}
           path: YearPlanner/app/build/reports/tests/
+          if-no-files-found: ignore
           retention-days: 7
 

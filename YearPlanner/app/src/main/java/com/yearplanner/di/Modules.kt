@@ -10,6 +10,7 @@ import com.yearplanner.reminders.ReminderScheduler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -19,7 +20,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@Suppress("UNUSED_PARAMETER") context: Context): YearPlannerDatabase {
+    fun provideDatabase(@ApplicationContext context: Context): YearPlannerDatabase {
         return YearPlannerDatabase.getInstance(context)
     }
 }
@@ -58,7 +59,7 @@ object ReminderModule {
 
     @Provides
     @Singleton
-    fun provideReminderScheduler(context: Context, repository: TaskRepository): ReminderScheduler {
+    fun provideReminderScheduler(@ApplicationContext context: Context, repository: TaskRepository): ReminderScheduler {
         return ReminderScheduler(context, repository)
     }
 }

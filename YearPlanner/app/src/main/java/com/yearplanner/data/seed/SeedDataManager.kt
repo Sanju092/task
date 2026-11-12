@@ -4,9 +4,10 @@ import com.yearplanner.data.model.*
 import com.yearplanner.data.repository.TaskRepository
 import com.yearplanner.domain.recurrence.RecurrenceGenerator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.ZoneId
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 
 class SeedDataManager(private val repository: TaskRepository) {
@@ -108,13 +109,14 @@ class SeedDataManager(private val repository: TaskRepository) {
             )
             repository.insertTask(task)
             
-            val plannedDate = LocalDate(seedTask.year, seedTask.month, seedTask.day)
+            val plannedDate = LocalDate.of(seedTask.year, seedTask.month, seedTask.day)
                 .atStartOfDay(zone)
                 .toInstant()
-                .toEpochMilliseconds()
+                .toEpochMilli()
             
             val occurrence = TaskOccurrence(
                 taskId = task.id,
+                originalOccurrenceKey = "seed_${task.id}",
                 planningPrecision = PlanningPrecision.DAY,
                 plannedDate = plannedDate,
                 deadlineDate = plannedDate,
@@ -132,7 +134,7 @@ class SeedDataManager(private val repository: TaskRepository) {
             taskId = weeklyMeeting.id,
             frequency = RecurrenceFrequency.WEEKLY,
             interval = 1,
-            anchorDate = LocalDate(thisYear, 1, 6).atStartOfDay(zone).toInstant().toEpochMilliseconds(), // First Monday
+            anchorDate = LocalDate.of(thisYear, 1, 6).atStartOfDay(zone).toInstant().toEpochMilli(), // First Monday
             zoneId = zone.id
         )
         repository.insertSeries(meetingSeries)
@@ -152,7 +154,7 @@ class SeedDataManager(private val repository: TaskRepository) {
             frequency = RecurrenceFrequency.MONTHLY,
             interval = 1,
             monthDay = 1,
-            anchorDate = LocalDate(thisYear, 1, 1).atStartOfDay(zone).toInstant().toEpochMilliseconds(),
+            anchorDate = LocalDate.of(thisYear, 1, 1).atStartOfDay(zone).toInstant().toEpochMilli(),
             zoneId = zone.id
         )
         repository.insertSeries(reportSeries)

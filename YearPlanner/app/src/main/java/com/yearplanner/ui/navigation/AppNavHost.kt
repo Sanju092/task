@@ -30,9 +30,9 @@ fun AppNavHost(viewModel: MainViewModel) {
                 onNavigate = { dest -> viewModel.navigateTo(dest) }
             )
         }
-        composable("month?year={year}&month={month}") {
-            val year = getIntArg("year") ?: java.time.Year.now().value
-            val month = getIntArg("month") ?: java.time.MonthDay.now().monthValue
+        composable("month?year={year}&month={month}") { backStackEntry ->
+            val year = backStackEntry.arguments?.getString("year")?.toIntOrNull() ?: java.time.Year.now().value
+            val month = backStackEntry.arguments?.getString("month")?.toIntOrNull() ?: java.time.MonthDay.now().monthValue
             MonthScreen(
                 year = year,
                 month = month,
@@ -45,8 +45,8 @@ fun AppNavHost(viewModel: MainViewModel) {
         composable("settings") {
             SettingsScreen(onNavigate = { dest -> viewModel.navigateTo(dest) })
         }
-        composable("task_detail?occurrenceId={occurrenceId}") {
-            val occurrenceId = getStringArg("occurrenceId") ?: ""
+        composable("task_detail?occurrenceId={occurrenceId}") { backStackEntry ->
+            val occurrenceId = backStackEntry.arguments?.getString("occurrenceId") ?: ""
             TaskDetailScreen(
                 occurrenceId = occurrenceId,
                 onNavigate = { dest -> viewModel.navigateTo(dest) }

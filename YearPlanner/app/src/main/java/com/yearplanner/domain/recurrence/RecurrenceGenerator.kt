@@ -1,9 +1,13 @@
 package com.yearplanner.domain.recurrence
 
 import com.yearplanner.data.model.*
-import kotlinx.datetime.*
-import kotlinx.datetime.format.DateTimeFormatter
+import java.time.Instant
+import java.time.LocalDate
+import java.time.Year
 import java.time.YearMonth
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -26,10 +30,9 @@ object RecurrenceGenerator {
         targetMonth: Int? = null,
         existingOccurrences: Map<String, TaskOccurrence> = emptyMap()
     ): List<TaskOccurrence> {
-        val zone = ZoneId.of(series.zoneId)
-        val anchor = Instant.ofEpochMilliseconds(series.anchorDate).toLocalDateTime(zone).toLocalDate()
-        val endDate = series.endDate?.let { Instant.ofEpochMilliseconds(it).toLocalDateTime(zone).toLocalDate() }
-        val maxDate = LocalDate(targetYear, 12, 31)
+        val zone = try { ZoneId.of(series.zoneId) } catch (e: Exception) { ZoneId.systemDefault() }
+        val anchor = Instant.ofEpochMilli(series.anchorDate).atZone(zone).toLocalDate()
+        val endDate = series.endDate?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalDate() }
 
         val occurrences = mutableListOf<TaskOccurrence>()
         var currentDate = anchor
@@ -71,11 +74,11 @@ object RecurrenceGenerator {
         if (currentDate.year > targetYear + MAX_GENERATION_YEARS_AHEAD) return false
         
         // Check target month if specified
-        if (targetMonth != null && currentDate.year == targetYear && currentDate.monthNumber > targetMonth) return false
+        if (targetMonth != null && currentDate.year == targetYear && currentDate.monthValue > targetMonth) return false
         if (targetMonth != null && currentDate.year > targetYear) return false
 
         // Check end date
-        endDate?.let { if (currentDate > it) return false }
+        endDate?.let { if (currentDate.isAfter(it)) return false }
 
         // Check end count
         endCount?.let { if (currentCount >= it) return false }
@@ -85,21 +88,21 @@ object RecurrenceGenerator {
 
     private fun advanceDate(date: LocalDate, series: RecurrenceSeries): LocalDate {
         return when (series.frequency) {
-            RecurrenceFrequency.DAILY -> date.plusDays(series.interval)
-            RecurrenceFrequency.WEEKLY -> date.plusWeeks(series.interval)
+            RecurrenceFrequency.DAILY -> date.plusDays(series.interval.toLong())
+            RecurrenceFrequency.WEEKLY -> date.plusWeeks(series.interval.toLong())
             RecurrenceFrequency.MONTHLY -> addMonths(date, series.interval)
-            RecurrenceFrequency.YEARLY -> date.plusYears(series.interval)
+            RecurrenceFrequency.YEARLY -> date.plusYears(series.interval.toLong())
             RecurrenceFrequency.WEEKDAYS -> advanceToNextWeekday(date, series.weekDays)
         }
     }
 
     private fun addMonths(date: LocalDate, months: Int): LocalDate {
-        var result = date.plusMonths(months)
+        var result = date.plusMonths(months.toLong())
         // Handle month-day overflow (e.g., Jan 31 + 1 month = Feb 28/29)
-        val yearMonth = YearMonth.of(result.year, result.monthNumber)
+        val yearMonth = YearMonth.of(result.year, result.monthValue)
         val maxDay = yearMonth.lengthOfMonth()
         if (result.dayOfMonth > maxDay) {
-            result = LocalDate(result.year, result.monthNumber, maxDay)
+            result = LocalDate.of(result.year, result.monthValue, maxDay)
         }
         return result
     }
@@ -110,7 +113,7 @@ object RecurrenceGenerator {
         var daysChecked = 0
         
         while (daysChecked < maxDays) {
-            val dayOfWeek = next.dayOfWeek // 1=Mon ... 7=Sun
+            val dayOfWeek = next.dayOfWeek.value // 1=Mon ... 7=Sun
             val bit = when (dayOfWeek) {
                 1 -> 1   // Monday
                 2 -> 2   // Tuesday
@@ -130,8 +133,8 @@ object RecurrenceGenerator {
         return next // Fallback
     }
 
-    private fun generateOccurrenceKey(series: RecurrenceSeries, date: LocalDate): String {
-        return "${series.id}_${date.year}_${date.monthNumber}_${date.dayOfMonth}"
+    fun generateOccurrenceKey(series: RecurrenceSeries, date: LocalDate): String {
+        return "${series.id}_${date.year}_${date.monthValue}_${date.dayOfMonth}"
     }
 
     private fun createOccurrenceFromSeries(
@@ -141,7 +144,7 @@ object RecurrenceGenerator {
         date: LocalDate,
         zone: ZoneId
     ): TaskOccurrence {
-        val plannedDateMillis = date.atStartOfDay(zone).toInstant().toEpochMilliseconds()
+        val plannedDateMillis = date.atStartOfDay(zone).toInstant().toEpochMilli()
         
         // Determine planning precision based on frequency
         val planningPrecision = when (series.frequency) {
@@ -156,7 +159,7 @@ object RecurrenceGenerator {
             originalOccurrenceKey = occurrenceKey,
             planningPrecision = planningPrecision,
             plannedDate = if (planningPrecision == PlanningPrecision.DAY) plannedDateMillis else null,
-            plannedMonth = if (planningPrecision == PlanningPrecision.MONTH) date.monthNumber else null,
+            plannedMonth = if (planningPrecision == PlanningPrecision.MONTH) date.monthValue else null,
             plannedYear = if (planningPrecision == PlanningPrecision.YEAR) date.year else null,
             deadlineDate = plannedDateMillis, // Default deadline = planned date
             zoneId = zone.id,
@@ -171,12 +174,12 @@ object RecurrenceGenerator {
      * Alternative: Feb 28 in non-leap years (requires explicit rule).
      */
     fun handleLeapYear(date: LocalDate, series: RecurrenceSeries): LocalDate {
-        if (date.monthNumber == 2 && date.dayOfMonth == 29) {
+        if (date.monthValue == 2 && date.dayOfMonth == 29) {
             val nextYear = date.year + series.interval
-            if (!LocalDate(nextYear, 2, 29).year.isLeapYear) {
+            if (!Year.isLeap(nextYear.toLong())) {
                 // Default behavior: skip this year (returns Feb 28 of next year)
                 // For "last day of month" rule, this would be handled differently
-                return LocalDate(nextYear, 2, 28)
+                return LocalDate.of(nextYear, 2, 28)
             }
         }
         return date
@@ -315,12 +318,12 @@ object RecurrenceParser {
     private fun parseDateTime(value: String): Long? {
         try {
             // Try ISO format first
-            return java.time.Instant.parse(value).toEpochMilli()
+            return Instant.parse(value).toEpochMilli()
         } catch (e: Exception) {
             try {
                 // Try basic format: 20251231T235959Z
-                val formatter = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'")
-                return java.time.ZonedDateTime.parse(value, formatter).toInstant().toEpochMilli()
+                val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'")
+                return ZonedDateTime.parse(value, formatter).toInstant().toEpochMilli()
             } catch (e2: Exception) {
                 return null
             }

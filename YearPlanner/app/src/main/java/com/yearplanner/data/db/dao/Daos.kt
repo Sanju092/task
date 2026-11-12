@@ -31,6 +31,9 @@ interface ProjectDao {
     @Query("SELECT * FROM projects WHERE id IN (:ids)")
     fun getByIds(ids: List<String>): Flow<List<Project>>
 
+    @Query("UPDATE projects SET archivedAt = :archivedAt, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun softDelete(id: String, archivedAt: Long, updatedAt: Long): Int
+
     @Query("DELETE FROM projects WHERE id = :id")
     suspend fun hardDelete(id: String): Int
 }
@@ -61,7 +64,7 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id IN (:ids) AND deletedAt IS NULL")
     fun getByIds(ids: List<String>): Flow<List<Task>>
 
-    @RawQuery(observedEntities = [Task::class])
+    @Query("SELECT * FROM tasks WHERE (title LIKE '%' || :query || '%' OR notes LIKE '%' || :query || '%') AND deletedAt IS NULL ORDER BY createdAt DESC")
     fun searchTasks(query: String): Flow<List<Task>>
 
     @Query("DELETE FROM tasks WHERE id = :id")
@@ -128,7 +131,7 @@ interface TaskOccurrenceDao {
 
     @Query("""
         SELECT * FROM task_occurrences
-        WHERE (plannedYear = :year OR deadlineDate IS NOT NULL AND strftime('%Y', deadlineDate/1000, 'unixepoch') = :year)
+        WHERE (plannedYear = :year OR (deadlineDate IS NOT NULL AND CAST(strftime('%Y', deadlineDate/1000, 'unixepoch') AS INTEGER) = :year))
         AND status != 'CANCELLED'
         ORDER BY
             CASE WHEN plannedDate IS NOT NULL THEN 0 ELSE 1 END,
@@ -197,7 +200,7 @@ interface TaskOccurrenceDao {
     """)
     suspend fun getTotalCountForDate(date: Long): Int
 
-    @Query("SELECT * FROM task_occurrences WHERE projectId = :projectId ORDER BY plannedDate ASC")
+    @Query("SELECT task_occurrences.* FROM task_occurrences INNER JOIN tasks ON task_occurrences.taskId = tasks.id WHERE tasks.projectId = :projectId AND tasks.deletedAt IS NULL ORDER BY task_occurrences.plannedDate ASC")
     fun getByProject(projectId: String): Flow<List<TaskOccurrence>>
 
     @Query("SELECT * FROM task_occurrences WHERE status = :status ORDER BY plannedDate ASC")
