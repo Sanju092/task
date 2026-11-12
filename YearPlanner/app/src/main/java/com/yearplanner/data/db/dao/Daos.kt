@@ -173,6 +173,7 @@ interface TaskOccurrenceDao {
         WHERE (plannedDate = :date OR (plannedDate IS NULL AND plannedMonth = :month AND plannedYear = :year))
         AND status != 'CANCELLED'
         ORDER BY sortOrder ASC
+        LIMIT :limit OFFSET :offset
     """)
     fun getForWidget(date: Long, month: Int, year: Int, limit: Int, offset: Int): Flow<List<TaskOccurrence>>
 

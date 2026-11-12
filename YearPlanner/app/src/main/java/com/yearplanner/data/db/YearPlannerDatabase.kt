@@ -23,7 +23,7 @@ import com.yearplanner.data.model.*
         GenerationCoverage::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class YearPlannerDatabase : RoomDatabase() {
