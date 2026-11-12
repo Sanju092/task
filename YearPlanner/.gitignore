@@ -1,0 +1,48 @@
+# Gradle
+.gradle/
+build/
+*/build/
+*/build.gradle.kts.d/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local configuration
+local.properties
+gradle.properties
+
+# Logs
+*.log
+
+# Generated
+*.apk
+*.aab
+*.ap_
+
+# Coverage
+*.ec
+*.exec
+
+# Kotlin
+*.kt.meta
+
+# Room
+schemas/
+
+# Hilt
+*.generated.hilt/
+
+# Compose
+compose/
+
+# Cache
+.cache/
