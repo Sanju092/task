@@ -26,7 +26,7 @@ fun AppNavHost(viewModel: MainViewModel) {
         composable("year") {
             YearScreen(
                 selectedYear = viewModel.selectedYear,
-                onYearChanged = { viewModel.setSelectedYear(it) },
+                onYearChanged = { viewModel.selectedYear = it },
                 onNavigate = { dest -> viewModel.navigateTo(dest) },
                 taskUseCases = viewModel.taskUseCases
             )

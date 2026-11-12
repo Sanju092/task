@@ -82,12 +82,4 @@ class MainViewModel @Inject constructor(
     fun dismissQuickAdd() {
         showQuickAddDialog = false
     }
-
-    fun setSelectedYear(year: Int) {
-        selectedYear = year
-    }
-
-    fun setSelectedMonth(month: Int) {
-        selectedMonth = month
-    }
 }
