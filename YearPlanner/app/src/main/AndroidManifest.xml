@@ -103,6 +103,19 @@
                 android:resource="@xml/year_agenda_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".widget.AnalyticsWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_analytics_name"
+            android:icon="@drawable/ic_widget_analytics">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/analytics_widget_info" />
+        </receiver>
+
         <!-- Reminder Broadcast Receivers -->
         <receiver
             android:name=".reminders.ReminderReceiver"

@@ -5,10 +5,12 @@
     <string name="widget_today_name">Year Planner - Today</string>
     <string name="widget_year_overview_name">Year Planner - Year Overview</string>
     <string name="widget_year_agenda_name">Year Planner - Year Agenda</string>
+    <string name="widget_analytics_name">Year Planner - Analytics &amp; Progress</string>
     
     <string name="widget_today_description">View and complete today\'s tasks</string>
-    <string name="widget_year_overview_description">View all 12 months at a glance</string>
-    <string name="widget_year_agenda_description">Browse all tasks for the year</string>
+    <string name="widget_year_overview_description">View 365-day contribution matrix at a glance</string>
+    <string name="widget_year_agenda_description">Browse all project tasks for the year</string>
+    <string name="widget_analytics_description">Track task completion analytics and progress</string>
     
     <string name="widget_loading">Loading…</string>
     <string name="widget_no_tasks">No tasks</string>

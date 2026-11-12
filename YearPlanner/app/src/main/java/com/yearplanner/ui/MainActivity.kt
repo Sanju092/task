@@ -1,5 +1,6 @@
 package com.yearplanner.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,8 +18,10 @@ import com.yearplanner.data.model.TaskOccurrence
 import com.yearplanner.ui.navigation.AppNavHost
 import com.yearplanner.ui.theme.Theme
 import com.yearplanner.ui.theme.ThemeMode
+import com.yearplanner.widget.WidgetUpdater
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -65,7 +68,8 @@ class MainActivity : ComponentActivity() {
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    val taskUseCases: com.yearplanner.domain.usecase.TaskUseCases
+    val taskUseCases: com.yearplanner.domain.usecase.TaskUseCases,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     var selectedYear: Int = java.time.Year.now().value
@@ -80,6 +84,7 @@ class MainViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             taskUseCases.seedIfNeeded()
+            WidgetUpdater.updateAllWidgets(context)
         }
     }
 
@@ -106,12 +111,14 @@ class MainViewModel @Inject constructor(
     fun toggleOccurrence(occurrenceId: String) {
         viewModelScope.launch {
             taskUseCases.toggleOccurrenceCompletion(occurrenceId)
+            WidgetUpdater.updateAllWidgets(context)
         }
     }
 
     fun deleteOccurrence(occurrenceId: String, onDone: () -> Unit = {}) {
         viewModelScope.launch {
             taskUseCases.deleteOccurrence(occurrenceId)
+            WidgetUpdater.updateAllWidgets(context)
             onDone()
         }
     }
@@ -148,24 +155,28 @@ class MainViewModel @Inject constructor(
                 deadlineDate = finalDateMillis,
                 zoneId = zone.id
             )
+            WidgetUpdater.updateAllWidgets(context)
         }
     }
 
     fun createProject(name: String, colorToken: String = "blue") {
         viewModelScope.launch {
             taskUseCases.createProject(name = name, colorToken = colorToken)
+            WidgetUpdater.updateAllWidgets(context)
         }
     }
 
     fun loadSampleData() {
         viewModelScope.launch {
             taskUseCases.seedSampleData()
+            WidgetUpdater.updateAllWidgets(context)
         }
     }
 
     fun clearAllData() {
         viewModelScope.launch {
             taskUseCases.clearAllData()
+            WidgetUpdater.updateAllWidgets(context)
         }
     }
 }

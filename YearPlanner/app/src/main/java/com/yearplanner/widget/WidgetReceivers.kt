@@ -10,9 +10,11 @@ abstract class BaseWidgetReceiver(private val widgetKind: WidgetKind) : GlanceAp
             WidgetKind.TODAY -> TodayWidget()
             WidgetKind.YEAR_OVERVIEW -> YearOverviewWidget()
             WidgetKind.YEAR_AGENDA -> YearAgendaWidget()
+            WidgetKind.ANALYTICS -> AnalyticsWidget()
         }
 }
 
 class TodayWidgetReceiver : BaseWidgetReceiver(WidgetKind.TODAY)
 class YearOverviewWidgetReceiver : BaseWidgetReceiver(WidgetKind.YEAR_OVERVIEW)
 class YearAgendaWidgetReceiver : BaseWidgetReceiver(WidgetKind.YEAR_AGENDA)
+class AnalyticsWidgetReceiver : BaseWidgetReceiver(WidgetKind.ANALYTICS)

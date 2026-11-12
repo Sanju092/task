@@ -163,7 +163,8 @@ data class WidgetConfig(
 enum class WidgetKind {
     TODAY,
     YEAR_OVERVIEW,
-    YEAR_AGENDA
+    YEAR_AGENDA,
+    ANALYTICS
 }
 
 @Serializable

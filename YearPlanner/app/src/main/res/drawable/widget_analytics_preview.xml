@@ -1,0 +1,38 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="180dp"
+    android:height="110dp"
+    android:viewportWidth="180"
+    android:viewportHeight="110">
+    <!-- Card Background -->
+    <path
+        android:fillColor="#1E1E1E"
+        android:pathData="M12,4 h156 a8,8 0 0 1 8,8 v86 a8,8 0 0 1 -8,8 h-156 a8,8 0 0 1 -8,-8 v-86 a8,8 0 0 1 8,-8 z"/>
+    <!-- Title -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M24,16 h70 v6 h-70 z"/>
+    <path
+        android:fillColor="#9E9E9E"
+        android:pathData="M24,26 h50 v4 h-50 z"/>
+    <!-- Stat ring / large metric bar -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M24,38 h132 v6 h-132 z"/>
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M24,38 h92 v6 h-92 z"/>
+    <!-- Breakdown Bars -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M24,54 h20 v12 h-20 z"/>
+    <path
+        android:fillColor="#EEEEEE"
+        android:pathData="M48,58 h60 v4 h-60 z"/>
+
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M24,72 h20 v12 h-20 z"/>
+    <path
+        android:fillColor="#EEEEEE"
+        android:pathData="M48,76 h75 v4 h-75 z"/>
+</vector>
