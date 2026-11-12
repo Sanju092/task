@@ -472,7 +472,7 @@ fun EmptyState(title: String, subtitle: String) {
         modifier = Modifier.fillMaxWidth().padding(32.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontal) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(Icons.Default.Inbox, contentDescription = "", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
             Spacer(modifier = Modifier.height(8.dp))
             Text(title, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -527,10 +527,7 @@ fun ProjectCard(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier.size(12.dp),
-                contentAlignment = Alignment.Center
-            )
+            Box(modifier = Modifier.size(12.dp))
             Text(project.name, fontSize = 16.sp, fontWeight = FontWeight.Medium)
         }
     }
