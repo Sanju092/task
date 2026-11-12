@@ -1,6 +1,17 @@
 # Year Planner - Android Task Planner
 
+[![Build APK](https://github.com/Sanju092/task/actions/workflows/build-apk.yml/badge.svg)](https://github.com/Sanju092/task/actions/workflows/build-apk.yml)
+
 A personal Android task planner with home-screen widgets for daily, yearly overview, and yearly agenda views.
+
+## ⬇️ Download APK
+
+The latest debug APK is automatically built on every push via GitHub Actions.
+
+1. Go to [**Actions tab**](https://github.com/Sanju092/task/actions/workflows/build-apk.yml) on GitHub
+2. Click the latest successful workflow run
+3. Scroll down to **Artifacts**
+4. Download **`YearPlanner-debug-<run-number>`**
 
 ## Features
 
