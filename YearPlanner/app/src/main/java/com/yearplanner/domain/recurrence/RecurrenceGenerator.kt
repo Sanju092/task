@@ -43,8 +43,15 @@ object RecurrenceGenerator {
 
             val occurrenceKey = generateOccurrenceKey(series, currentDate)
             
+            // Only include occurrences belonging to the requested target scope
+            val inTargetScope = if (targetMonth != null) {
+                currentDate.year == targetYear && currentDate.monthValue == targetMonth
+            } else {
+                currentDate.year == targetYear
+            }
+
             // Skip if already exists (preserves overrides and completions)
-            if (!existingOccurrences.containsKey(occurrenceKey)) {
+            if (inTargetScope && !existingOccurrences.containsKey(occurrenceKey)) {
                 val occurrence = createOccurrenceFromSeries(
                     series = series,
                     task = task,
@@ -70,12 +77,11 @@ object RecurrenceGenerator {
         endCount: Int?,
         currentCount: Int
     ): Boolean {
-        // Check year bounds
-        if (currentDate.year > targetYear + MAX_GENERATION_YEARS_AHEAD) return false
+        // Stop if current date has passed the target year
+        if (currentDate.year > targetYear) return false
         
-        // Check target month if specified
+        // Stop if target month is specified and current date has passed that month in the target year
         if (targetMonth != null && currentDate.year == targetYear && currentDate.monthValue > targetMonth) return false
-        if (targetMonth != null && currentDate.year > targetYear) return false
 
         // Check end date
         endDate?.let { if (currentDate.isAfter(it)) return false }
@@ -159,7 +165,7 @@ object RecurrenceGenerator {
             seriesId = series.id,
             originalOccurrenceKey = occurrenceKey,
             planningPrecision = planningPrecision,
-            plannedDate = if (planningPrecision == PlanningPrecision.DAY) plannedDateMillis else null,
+            plannedDate = plannedDateMillis,
             plannedMonth = if (planningPrecision == PlanningPrecision.MONTH) date.monthValue else null,
             plannedYear = if (planningPrecision == PlanningPrecision.YEAR) date.year else null,
             deadlineDate = plannedDateMillis, // Default deadline = planned date

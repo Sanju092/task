@@ -1,4 +1,7 @@
-YearPlanner-debug.zip
+YearPlanner-debug*.zip
 build-output/
+test-results/
 *.log
 job_log*.txt
+
+
