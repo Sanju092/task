@@ -73,6 +73,7 @@ dependencies {
     // Compose & Material 3 (via BOM)
     implementation(platform(libs.compose.bom))
     implementation(libs.material3)
+    implementation(libs.google.material)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -95,6 +96,7 @@ dependencies {
     // Kotlinx Coroutines & Serialization
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.okio)
 
     // Testing

@@ -6,7 +6,6 @@ import com.yearplanner.data.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.tasks.await
 import java.util.concurrent.Executors
 
 class TaskRepository(private val database: YearPlannerDatabase) {
