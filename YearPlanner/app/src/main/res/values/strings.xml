@@ -44,7 +44,7 @@
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
     <string name="export">Export</string>
-    <string name="import">Import</string>
+    <string name="import_data">Import</string>
     <string name="backup">Backup</string>
     <string name="restore">Restore</string>
     <string name="theme">Theme</string>
