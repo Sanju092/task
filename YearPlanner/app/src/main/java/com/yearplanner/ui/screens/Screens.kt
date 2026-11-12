@@ -710,9 +710,9 @@ fun SettingsScreen(
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                "A high-performance yearly planner and goal tracking app built with Jetpack Compose, Room Database, and Glance Home Widgets.
+                                """A high-performance yearly planner and goal tracking app built with Jetpack Compose, Room Database, and Glance Home Widgets.
 
-Features: Year-at-a-glance heatmap, offline-first, no account required, CSV/JSON backup, lock screen widgets.",
+Features: Year-at-a-glance heatmap, offline-first, no account required, CSV/JSON backup, lock screen widgets.""",
                                 fontSize = 13.sp
                             )
                         }
@@ -751,10 +751,10 @@ Features: Year-at-a-glance heatmap, offline-first, no account required, CSV/JSON
         AlertDialog(
             onDismissRequest = { showExportDialog = false },
             title = { Text("Export Data") },
-            text = { Text("Choose export format:
+            text = { Text("""Choose export format:
 
 * JSON - Full fidelity backup
-* CSV - Spreadsheet compatible") },
+* CSV - Spreadsheet compatible""") },
             confirmButton = {
                 Button(onClick = { viewModel.exportData("json"); showExportDialog = false }) {
                     Text("Export JSON")
@@ -772,9 +772,9 @@ Features: Year-at-a-glance heatmap, offline-first, no account required, CSV/JSON
         AlertDialog(
             onDismissRequest = { showImportDialog = false },
             title = { Text("Import Data") },
-            text = { Text("Select a JSON or CSV file to import.
+            text = { Text("""Select a JSON or CSV file to import.
 
-Note: Import will merge with existing data.") },
+Note: Import will merge with existing data.""") },
             confirmButton = {
                 Button(onClick = { /* open file picker */ showImportDialog = false }) {
                     Text("Choose File")
