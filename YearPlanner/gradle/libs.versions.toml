@@ -1,6 +1,7 @@
 [versions]
 agp = "8.5.0"
 kotlin = "1.9.23"
+ksp = "1.9.23-1.0.20"
 compileSdk = "34"
 minSdk = "26"
 targetSdk = "34"
@@ -12,14 +13,14 @@ composeCompiler = "1.5.13"
 material3 = "1.2.1"
 activityCompose = "1.8.2"
 navigationCompose = "2.7.6"
-hilt = "2.48"
+hilt = "2.51.0"
+glance = "1.0.0"
 datastore = "1.0.0"
 workManager = "2.9.0"
-alarmManager = "1.0.0"
 junit = "4.13.2"
 junitJupiter = "5.10.2"
 espresso = "3.5.1"
-composeUiTest = "1.5.4"
+composeUiTest = "1.6.0"
 truth = "1.1.3"
 robolectric = "4.11"
 kotlinxCoroutines = "1.7.3"
@@ -48,8 +49,7 @@ compose-compiler = { group = "org.jetbrains.kotlin", name = "kotlin-serializatio
 material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 # Glance (Widgets)
-glance = { group = "androidx.glance", name = "glance-appwidget", version.ref = "composeBom" }
-glance-wear = { group = "androidx.glance", name = "glance-wear-tiles", version.ref = "composeBom" }
+glance = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 
 # DataStore
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
@@ -81,5 +81,5 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin" }
-hilt = { id = "com.google.dagger.hilt", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

@@ -55,8 +55,6 @@ android {
         compose = true
         dataBinding = true
     }
-
-    namespace = "com.yearplanner"
 }
 
 dependencies {
@@ -82,7 +80,6 @@ dependencies {
 
     // Glance for Widgets
     implementation(libs.glance)
-    implementation("androidx.glance:glance-appwidget-proto")
 
     // DataStore for Preferences
     implementation(libs.datastore.preferences)
