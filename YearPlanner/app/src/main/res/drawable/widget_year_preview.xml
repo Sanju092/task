@@ -1,13 +1,43 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="250dp"
-    android:height="250dp"
-    android:viewportWidth="250"
-    android:viewportHeight="250">
+    android:width="180dp"
+    android:height="160dp"
+    android:viewportWidth="180"
+    android:viewportHeight="160">
+    <!-- Card Background -->
     <path
         android:fillColor="#1E1E1E"
-        android:pathData="M0,0h250v250h-250z"/>
+        android:pathData="M12,4 h156 a8,8 0 0 1 8,8 v136 a8,8 0 0 1 -8,8 h-156 a8,8 0 0 1 -8,-8 v-136 a8,8 0 0 1 8,-8 z"/>
+    <!-- Title -->
     <path
-        android:fillColor="#2196F3"
-        android:pathData="M16,16h40v12h-40z"/>
+        android:fillColor="#64B5F6"
+        android:pathData="M24,16 h60 v6 h-60 z"/>
+    <path
+        android:fillColor="#757575"
+        android:pathData="M24,26 h80 v4 h-80 z"/>
+    <!-- 12 Month Grid -->
+    <!-- Row 1 -->
+    <path android:fillColor="#333333" android:pathData="M24,38 h30 v20 h-30 z"/>
+    <path android:fillColor="#4CAF50" android:pathData="M26,54 h20 v2 h-20 z"/>
+    <path android:fillColor="#333333" android:pathData="M60,38 h30 v20 h-30 z"/>
+    <path android:fillColor="#2196F3" android:pathData="M62,54 h16 v2 h-16 z"/>
+    <path android:fillColor="#333333" android:pathData="M96,38 h30 v20 h-30 z"/>
+    <path android:fillColor="#FF9800" android:pathData="M98,54 h12 v2 h-12 z"/>
+    <path android:fillColor="#333333" android:pathData="M132,38 h30 v20 h-30 z"/>
+    <!-- Row 2 -->
+    <path android:fillColor="#333333" android:pathData="M24,64 h30 v20 h-30 z"/>
+    <path android:fillColor="#2196F3" android:pathData="M26,80 h15 v2 h-15 z"/>
+    <path android:fillColor="#333333" android:pathData="M60,64 h30 v20 h-30 z"/>
+    <path android:fillColor="#4CAF50" android:pathData="M62,80 h24 v2 h-24 z"/>
+    <path android:fillColor="#333333" android:pathData="M96,64 h30 v20 h-30 z"/>
+    <path android:fillColor="#333333" android:pathData="M132,64 h30 v20 h-30 z"/>
+    <!-- Row 3 -->
+    <path android:fillColor="#333333" android:pathData="M24,90 h30 v20 h-30 z"/>
+    <path android:fillColor="#333333" android:pathData="M60,90 h30 v20 h-30 z"/>
+    <path android:fillColor="#333333" android:pathData="M96,90 h30 v20 h-30 z"/>
+    <path android:fillColor="#333333" android:pathData="M132,90 h30 v20 h-30 z"/>
+    <!-- Row 4 -->
+    <path android:fillColor="#333333" android:pathData="M24,116 h30 v20 h-30 z"/>
+    <path android:fillColor="#333333" android:pathData="M60,116 h30 v20 h-30 z"/>
+    <path android:fillColor="#333333" android:pathData="M96,116 h30 v20 h-30 z"/>
+    <path android:fillColor="#333333" android:pathData="M132,116 h30 v20 h-30 z"/>
 </vector>
-

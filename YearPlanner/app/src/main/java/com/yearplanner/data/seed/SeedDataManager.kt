@@ -19,8 +19,7 @@ class SeedDataManager(private val repository: TaskRepository) {
         seedSampleData()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private suspend fun seedSampleData() = withContext(Dispatchers.IO) {
+    suspend fun seedSampleData() = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         val zone = ZoneId.systemDefault()
         val thisYear = LocalDate.now().year
@@ -116,6 +115,7 @@ class SeedDataManager(private val repository: TaskRepository) {
             
             val occurrence = TaskOccurrence(
                 taskId = task.id,
+                title = task.title,
                 originalOccurrenceKey = "seed_${task.id}",
                 planningPrecision = PlanningPrecision.DAY,
                 plannedDate = plannedDate,
@@ -125,6 +125,16 @@ class SeedDataManager(private val repository: TaskRepository) {
             )
             repository.insertOccurrence(occurrence)
         }
+
+        // Add 2 tasks specifically for today so the user immediately sees tasks
+        val today = LocalDate.now()
+        val todayMillis = today.atStartOfDay(zone).toInstant().toEpochMilli()
+        val todayTask1 = Task(title = "Review Year Planner", notes = "Explore yearly roadmap and scheduled tasks", projectId = workProject.id, priority = 3)
+        val todayTask2 = Task(title = "Daily habit check-in", notes = "Review fitness and reading goals", projectId = healthProject.id, priority = 2)
+        repository.insertTask(todayTask1)
+        repository.insertTask(todayTask2)
+        repository.insertOccurrence(TaskOccurrence(taskId = todayTask1.id, title = todayTask1.title, originalOccurrenceKey = "today_${todayTask1.id}", planningPrecision = PlanningPrecision.DAY, plannedDate = todayMillis, deadlineDate = todayMillis, zoneId = zone.id))
+        repository.insertOccurrence(TaskOccurrence(taskId = todayTask2.id, title = todayTask2.title, originalOccurrenceKey = "today_${todayTask2.id}", planningPrecision = PlanningPrecision.DAY, plannedDate = todayMillis, deadlineDate = todayMillis, zoneId = zone.id))
         
         // Add a recurring task example
         val weeklyMeeting = Task(title = "Weekly Team Sync", projectId = workProject.id, priority = 2)

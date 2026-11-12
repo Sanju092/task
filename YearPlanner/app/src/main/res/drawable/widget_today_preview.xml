@@ -1,13 +1,45 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="180dp"
-    android:height="110dp"
+    android:height="120dp"
     android:viewportWidth="180"
-    android:viewportHeight="110">
+    android:viewportHeight="120">
+    <!-- Card Background -->
     <path
         android:fillColor="#1E1E1E"
-        android:pathData="M0,0h180v110h-180z"/>
+        android:pathData="M12,4 h156 a8,8 0 0 1 8,8 v96 a8,8 0 0 1 -8,8 h-156 a8,8 0 0 1 -8,-8 v-96 a8,8 0 0 1 8,-8 z"/>
+    <!-- Top accent bar / header -->
     <path
         android:fillColor="#2196F3"
-        android:pathData="M16,16h40v12h-40z"/>
+        android:pathData="M20,16 h48 v6 h-48 z"/>
+    <path
+        android:fillColor="#757575"
+        android:pathData="M20,26 h72 v4 h-72 z"/>
+    <!-- Checkbox item 1 -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M20,38 h10 v10 h-10 z"/>
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M36,41 h96 v4 h-96 z"/>
+    <!-- Checkbox item 2 -->
+    <path
+        android:fillColor="#757575"
+        android:pathData="M20,54 h10 v10 h-10 z"/>
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M36,57 h80 v4 h-80 z"/>
+    <!-- Checkbox item 3 -->
+    <path
+        android:fillColor="#757575"
+        android:pathData="M20,70 h10 v10 h-10 z"/>
+    <path
+        android:fillColor="#BDBDBD"
+        android:pathData="M36,73 h64 v4 h-64 z"/>
+    <!-- Bottom Add Button -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M20,90 h60 v16 h-60 z"/>
+    <path
+        android:fillColor="#333333"
+        android:pathData="M88,90 h68 v16 h-68 z"/>
 </vector>
-

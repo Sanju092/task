@@ -1,13 +1,33 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="250dp"
-    android:height="300dp"
-    android:viewportWidth="250"
-    android:viewportHeight="300">
+    android:width="180dp"
+    android:height="160dp"
+    android:viewportWidth="180"
+    android:viewportHeight="160">
+    <!-- Card Background -->
     <path
         android:fillColor="#1E1E1E"
-        android:pathData="M0,0h250v300h-250z"/>
+        android:pathData="M12,4 h156 a8,8 0 0 1 8,8 v136 a8,8 0 0 1 -8,8 h-156 a8,8 0 0 1 -8,-8 v-136 a8,8 0 0 1 8,-8 z"/>
+    <!-- Title -->
     <path
-        android:fillColor="#2196F3"
-        android:pathData="M16,16h40v12h-40z"/>
+        android:fillColor="#FFB74D"
+        android:pathData="M24,16 h64 v6 h-64 z"/>
+    <path
+        android:fillColor="#757575"
+        android:pathData="M24,26 h80 v4 h-80 z"/>
+    <!-- Agenda List Items -->
+    <!-- Item 1 -->
+    <path android:fillColor="#2196F3" android:pathData="M24,40 h6 v20 h-6 z"/>
+    <path android:fillColor="#E0E0E0" android:pathData="M36,44 h80 v4 h-80 z"/>
+    <path android:fillColor="#9E9E9E" android:pathData="M36,52 h50 v3 h-50 z"/>
+    <!-- Item 2 -->
+    <path android:fillColor="#4CAF50" android:pathData="M24,68 h6 v20 h-6 z"/>
+    <path android:fillColor="#E0E0E0" android:pathData="M36,72 h90 v4 h-90 z"/>
+    <path android:fillColor="#9E9E9E" android:pathData="M36,80 h60 v3 h-60 z"/>
+    <!-- Item 3 -->
+    <path android:fillColor="#FF9800" android:pathData="M24,96 h6 v20 h-6 z"/>
+    <path android:fillColor="#E0E0E0" android:pathData="M36,100 h75 v4 h-75 z"/>
+    <path android:fillColor="#9E9E9E" android:pathData="M36,108 h45 v3 h-45 z"/>
+    <!-- Item 4 -->
+    <path android:fillColor="#9C27B0" android:pathData="M24,124 h6 v16 h-6 z"/>
+    <path android:fillColor="#BDBDBD" android:pathData="M36,128 h85 v4 h-85 z"/>
 </vector>
-

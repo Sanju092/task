@@ -1,0 +1,4 @@
+YearPlanner-debug.zip
+build-output/
+*.log
+job_log*.txt

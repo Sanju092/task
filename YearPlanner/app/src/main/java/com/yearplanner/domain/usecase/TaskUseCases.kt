@@ -136,7 +136,46 @@ class TaskUseCases(private val repository: TaskRepository) {
         return repository.completeOccurrence(occurrenceId, occurrence.version)
     }
 
+    suspend fun toggleOccurrenceCompletion(occurrenceId: String): Boolean {
+        val occurrence = repository.getOccurrence(occurrenceId).first() ?: return false
+        return if (occurrence.status == OccurrenceStatus.COMPLETED) {
+            val updated = occurrence.copy(
+                status = OccurrenceStatus.PENDING,
+                completedAt = null,
+                version = occurrence.version + 1,
+                updatedAt = System.currentTimeMillis()
+            )
+            repository.updateOccurrence(updated)
+            true
+        } else {
+            repository.completeOccurrence(occurrenceId, occurrence.version)
+        }
+    }
+
     suspend fun undoCompletion(undoActionId: String): Boolean = repository.undoCompletion(undoActionId)
+
+    suspend fun seedIfNeeded() {
+        com.yearplanner.data.seed.SeedDataManager(repository).seedIfNeeded()
+    }
+
+    suspend fun seedSampleData() {
+        com.yearplanner.data.seed.SeedDataManager(repository).seedSampleData()
+    }
+
+    suspend fun clearAllData() {
+        val tasks = repository.getAllTasks().first()
+        for (task in tasks) {
+            repository.deleteTask(task.id)
+            val occurrences = repository.getOccurrencesByTask(task.id).first()
+            for (occ in occurrences) {
+                repository.deleteOccurrence(occ.id)
+            }
+        }
+        val projects = repository.getAllProjects().first()
+        for (proj in projects) {
+            repository.deleteProject(proj.id)
+        }
+    }
 
     // Reminder Use Cases
     suspend fun scheduleReminder(

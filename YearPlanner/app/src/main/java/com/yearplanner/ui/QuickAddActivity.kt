@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -31,18 +32,27 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class QuickAddActivity : ComponentActivity() {
 
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Make activity appear as a dialog
         window.setBackgroundDrawableResource(android.R.color.transparent)
         
         setContent {
-            Theme {
+            val themeMode by viewModel.themeMode
+            Theme(themeMode = themeMode) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = Color.Transparent
                 ) {
-                    QuickAddDialogContent(onDismiss = { finish() })
+                    QuickAddDialogContent(
+                        onDismiss = { finish() },
+                        onSave = { title, notes ->
+                            viewModel.createTask(title = title, notes = notes)
+                            finish()
+                        }
+                    )
                 }
             }
         }
@@ -50,7 +60,10 @@ class QuickAddActivity : ComponentActivity() {
 }
 
 @Composable
-fun QuickAddDialogContent(onDismiss: () -> Unit) {
+fun QuickAddDialogContent(
+    onDismiss: () -> Unit,
+    onSave: (String, String) -> Unit
+) {
     var title by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
     
@@ -79,10 +92,14 @@ fun QuickAddDialogContent(onDismiss: () -> Unit) {
             }
         },
         confirmButton = {
-            Button(onClick = { 
-                // TODO: Save task
-                onDismiss() 
-            }) { Text("Save") }
+            Button(
+                onClick = { 
+                    if (title.isNotBlank()) {
+                        onSave(title, notes)
+                    }
+                },
+                enabled = title.isNotBlank()
+            ) { Text("Save") }
         },
         dismissButton = {
             Button(onClick = onDismiss) { Text("Cancel") }

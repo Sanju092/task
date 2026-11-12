@@ -155,6 +155,7 @@ object RecurrenceGenerator {
 
         return TaskOccurrence(
             taskId = task.id,
+            title = task.title,
             seriesId = series.id,
             originalOccurrenceKey = occurrenceKey,
             planningPrecision = planningPrecision,
