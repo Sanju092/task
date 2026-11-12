@@ -1,13 +1,16 @@
 package com.yearplanner.widget
 
 import android.content.Context
-import android.content.Intent
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.glance.GlanceAppWidget
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -22,8 +25,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import androidx.glance.unit.dp
-import androidx.glance.unit.sp
 import com.yearplanner.ui.MainActivity
 import com.yearplanner.ui.QuickAddActivity
 import java.time.LocalDate
@@ -59,7 +60,7 @@ class TodayWidget : GlanceAppWidget() {
                         Text(
                             text = formattedDate,
                             style = TextStyle(
-                                fontSize = 14.sp,
+                                fontSize = 12.sp,
                                 color = ColorProvider(Color(0xFFB0B0B0))
                             )
                         )
@@ -68,8 +69,9 @@ class TodayWidget : GlanceAppWidget() {
 
                 Spacer(modifier = GlanceModifier.height(12.dp))
 
+                // Quick stats
                 Text(
-                    text = "Tap to view today's tasks",
+                    text = "Track your year at a glance",
                     style = TextStyle(
                         fontSize = 14.sp,
                         color = ColorProvider(Color(0xFF81C784))
@@ -77,7 +79,7 @@ class TodayWidget : GlanceAppWidget() {
                     modifier = GlanceModifier
                         .fillMaxWidth()
                         .padding(8.dp)
-                        .clickable(actionStartActivity(Intent(context, MainActivity::class.java)))
+                        .clickable(actionStartActivity<MainActivity>())
                 )
 
                 Spacer(modifier = GlanceModifier.height(12.dp))
@@ -88,7 +90,7 @@ class TodayWidget : GlanceAppWidget() {
                             .defaultWeight()
                             .padding(4.dp)
                             .background(Color(0xFF2196F3))
-                            .clickable(actionStartActivity(Intent(context, QuickAddActivity::class.java))),
+                            .clickable(actionStartActivity<QuickAddActivity>()),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -106,7 +108,7 @@ class TodayWidget : GlanceAppWidget() {
                             .defaultWeight()
                             .padding(4.dp)
                             .background(Color(0xFF333333))
-                            .clickable(actionStartActivity(Intent(context, MainActivity::class.java))),
+                            .clickable(actionStartActivity<MainActivity>()),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -136,7 +138,7 @@ class YearOverviewWidget : GlanceAppWidget() {
                     .fillMaxSize()
                     .background(Color(0xFF1E1E1E))
                     .padding(12.dp)
-                    .clickable(actionStartActivity(Intent(context, MainActivity::class.java)))
+                    .clickable(actionStartActivity<MainActivity>())
             ) {
                 Text(
                     text = "Year Overview $year",
@@ -170,7 +172,7 @@ class YearAgendaWidget : GlanceAppWidget() {
                     .fillMaxSize()
                     .background(Color(0xFF1E1E1E))
                     .padding(12.dp)
-                    .clickable(actionStartActivity(Intent(context, MainActivity::class.java)))
+                    .clickable(actionStartActivity<MainActivity>())
             ) {
                 Text(
                     text = "Agenda $year",

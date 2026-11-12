@@ -14,20 +14,21 @@ import com.yearplanner.ui.screens.*
 @Composable
 fun AppNavHost(viewModel: MainViewModel) {
     val navController = rememberNavController()
-    val currentDestination by remember { mutableStateOf(viewModel.currentDestination) }
     
     NavHost(navController, startDestination = "today") {
         composable("today") {
             TodayScreen(
                 onNavigate = { dest -> viewModel.navigateTo(dest) },
-                onQuickAdd = { viewModel.showQuickAdd() }
+                onQuickAdd = { viewModel.showQuickAdd() },
+                taskUseCases = viewModel.taskUseCases
             )
         }
         composable("year") {
             YearScreen(
                 selectedYear = viewModel.selectedYear,
                 onYearChanged = { viewModel.setSelectedYear(it) },
-                onNavigate = { dest -> viewModel.navigateTo(dest) }
+                onNavigate = { dest -> viewModel.navigateTo(dest) },
+                taskUseCases = viewModel.taskUseCases
             )
         }
         composable("month?year={year}&month={month}") { backStackEntry ->
@@ -36,11 +37,15 @@ fun AppNavHost(viewModel: MainViewModel) {
             MonthScreen(
                 year = year,
                 month = month,
-                onNavigate = { dest -> viewModel.navigateTo(dest) }
+                onNavigate = { dest -> viewModel.navigateTo(dest) },
+                taskUseCases = viewModel.taskUseCases
             )
         }
         composable("projects") {
-            ProjectsScreen(onNavigate = { dest -> viewModel.navigateTo(dest) })
+            ProjectsScreen(
+                onNavigate = { dest -> viewModel.navigateTo(dest) },
+                taskUseCases = viewModel.taskUseCases
+            )
         }
         composable("settings") {
             SettingsScreen(onNavigate = { dest -> viewModel.navigateTo(dest) })
@@ -49,7 +54,8 @@ fun AppNavHost(viewModel: MainViewModel) {
             val occurrenceId = backStackEntry.arguments?.getString("occurrenceId") ?: ""
             TaskDetailScreen(
                 occurrenceId = occurrenceId,
-                onNavigate = { dest -> viewModel.navigateTo(dest) }
+                onNavigate = { dest -> viewModel.navigateTo(dest) },
+                taskUseCases = viewModel.taskUseCases
             )
         }
         composable("quick_add") {

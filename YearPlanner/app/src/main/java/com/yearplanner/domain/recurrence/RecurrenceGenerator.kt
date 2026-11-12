@@ -221,6 +221,9 @@ object RecurrenceGenerator {
             RecurrenceFrequency.YEARLY -> {
                 // Yearly uses anchor date's month/day
             }
+            RecurrenceFrequency.DAILY, RecurrenceFrequency.WEEKLY -> {
+                // No extra validation needed
+            }
         }
 
         if (series.endCount != null && series.endCount!! <= 0) {

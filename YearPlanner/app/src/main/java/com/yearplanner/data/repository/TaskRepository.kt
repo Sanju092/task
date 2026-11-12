@@ -1,10 +1,12 @@
 package com.yearplanner.data.repository
 
+import androidx.room.withTransaction
 import com.yearplanner.data.db.YearPlannerDatabase
 import com.yearplanner.data.db.dao.*
 import com.yearplanner.data.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.concurrent.Executors
 
@@ -71,7 +73,9 @@ class TaskRepository(private val database: YearPlannerDatabase) {
     suspend fun insertReminder(reminder: Reminder) = reminderDao.insert(reminder)
     suspend fun insertReminders(reminders: List<Reminder>) = reminderDao.insertAll(reminders)
     suspend fun updateReminder(reminder: Reminder) = reminderDao.update(reminder)
-    suspend fun deleteReminder(id: String) = reminderDao.delete(reminderDao.getById(id).first())
+    suspend fun deleteReminder(id: String) {
+        reminderDao.getById(id).first()?.let { reminderDao.delete(it) }
+    }
     suspend fun deleteRemindersByOccurrence(occurrenceId: String) = reminderDao.deleteByOccurrenceId(occurrenceId)
     suspend fun disableRemindersByOccurrence(occurrenceId: String) = reminderDao.disableByOccurrenceId(occurrenceId)
     fun getDueReminders(now: Long): Flow<List<Reminder>> = reminderDao.getDueReminders(now)
@@ -136,16 +140,16 @@ class TaskRepository(private val database: YearPlannerDatabase) {
 
     // Transactional operations
     suspend fun completeOccurrence(occurrenceId: String, expectedVersion: Int): Boolean {
-        return database.runInTransaction {
+        return database.withTransaction {
             val occurrence = occurrenceDao.getById(occurrenceId).first()
-                ?: return@runInTransaction false
+                ?: return@withTransaction false
             
             if (occurrence.version != expectedVersion) {
-                return@runInTransaction false
+                return@withTransaction false
             }
             
             if (occurrence.status == OccurrenceStatus.COMPLETED) {
-                return@runInTransaction true // Idempotent
+                return@withTransaction true // Idempotent
             }
             
             val previousStatus = occurrence.status
@@ -177,16 +181,16 @@ class TaskRepository(private val database: YearPlannerDatabase) {
     }
 
     suspend fun undoCompletion(undoActionId: String): Boolean {
-        return database.runInTransaction {
+        return database.withTransaction {
             val undoAction = undoActionDao.getById(undoActionId).first()
-                ?: return@runInTransaction false
+                ?: return@withTransaction false
             
             val occurrence = occurrenceDao.getById(undoAction.occurrenceId).first()
-                ?: return@runInTransaction false
+                ?: return@withTransaction false
             
             // Check if the occurrence is still at the expected version (hasn't been modified since)
             if (occurrence.version != undoAction.expectedVersion + 1) {
-                return@runInTransaction false
+                return@withTransaction false
             }
             
             val restoredOccurrence = occurrence.copy(

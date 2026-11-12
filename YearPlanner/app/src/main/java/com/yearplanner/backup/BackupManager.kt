@@ -93,7 +93,7 @@ class BackupManager(private val context: Context, private val repository: TaskRe
     /**
      * Restores backup data to the database.
      */
-    private suspend fun restoreBackupData(backupData: BackupData): Result<ImportResult> {
+    private suspend fun restoreBackupData(backupData: BackupData): Result<ImportResult> = withContext(Dispatchers.IO) {
         var importedProjects = 0
         var importedTasks = 0
         var importedSeries = 0
@@ -101,7 +101,7 @@ class BackupManager(private val context: Context, private val repository: TaskRe
         var importedReminders = 0
         val errors = mutableListOf<String>()
 
-        try {
+        return@withContext try {
             // Restore projects
             for (project in backupData.projects) {
                 try {
@@ -211,7 +211,7 @@ class BackupManager(private val context: Context, private val repository: TaskRe
                     "$deadlineDateStr," +
                     "$deadlineTimeStr," +
                     "${occurrence.zoneId}," +
-                    "${occurrence.priority}," +
+                    "${task?.priority ?: 0}," +
                     "${escapeCsv(repeatRule)}\n"
                 
                 writer.write(line)
@@ -241,12 +241,13 @@ class BackupManager(private val context: Context, private val repository: TaskRe
             val errors = mutableListOf<String>()
             var lineNumber = 1
             
-            reader.forEachLine { line ->
+            val lines = reader.readLines()
+            for (line in lines) {
                 lineNumber++
                 val columns = parseCsvLine(line)
                 if (columns.size < header.size) {
                     errors.add("Line $lineNumber: Column count mismatch")
-                    return@forEachLine
+                    continue
                 }
                 
                 try {

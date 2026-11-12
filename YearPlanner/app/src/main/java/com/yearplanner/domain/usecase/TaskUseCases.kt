@@ -1,7 +1,9 @@
 package com.yearplanner.domain.usecase
 
 import com.yearplanner.data.model.*
+import com.yearplanner.data.repository.MonthSummary
 import com.yearplanner.data.repository.TaskRepository
+import com.yearplanner.data.repository.YearSummary
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.util.UUID
@@ -177,16 +179,3 @@ class TaskUseCases(private val repository: TaskRepository) {
 
     fun getGenerationCoverage(seriesId: String): Flow<GenerationCoverage?> = repository.getCoverage(seriesId)
 }
-
-data class YearSummary(
-    val year: Int,
-    val months: Map<Int, MonthSummary>
-)
-
-data class MonthSummary(
-    val month: Int,
-    val year: Int,
-    val totalTasks: Int,
-    val completedTasks: Int,
-    val tasks: List<TaskOccurrence>
-)
