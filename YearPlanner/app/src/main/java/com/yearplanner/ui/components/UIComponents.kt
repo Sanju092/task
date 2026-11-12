@@ -1,8 +1,9 @@
 package com.yearplanner.ui.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateDpAsState
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -88,19 +89,19 @@ fun TaskCard(
             isOverdue -> Color(0xFF3E1A1A)
             else -> MaterialTheme.colorScheme.surfaceContainer
         },
-        animationSpec = Spring(dampingRatio = Spring.DampingRatioMediumBouncy)
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
     )
     
     val elevation by animateDpAsState(
         targetValue = if (animateEntrance) 4.dp else 0.dp,
-        animationSpec = Spring(dampingRatio = Spring.DampingRatioMediumBouncy)
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
     )
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .clickable(onClick = onClick),
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = bgColor
         ),
@@ -569,13 +570,7 @@ fun FilterChip(
         onClick = onClick,
         modifier = Modifier.height(32.dp),
         leadingIcon = { icon?.let { Icon(it, contentDescription = "") } },
-        label = { Text(text) },
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            unselectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            unselectedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        label = { Text(text) }
     )
 }
 
@@ -602,10 +597,6 @@ fun SortChip(
                 )
             }
         },
-        label = { Text(text) },
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            unselectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-        )
+        label = { Text(text) }
     )
 }

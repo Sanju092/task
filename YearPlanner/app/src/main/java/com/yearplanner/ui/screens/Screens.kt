@@ -3,8 +3,8 @@
 package com.yearplanner.ui.screens
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateDpAsState
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,7 +42,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yearplanner.data.model.MonthSummary
+import com.yearplanner.data.repository.MonthSummary
+import com.yearplanner.data.repository.YearSummary
 import com.yearplanner.data.model.OccurrenceStatus
 import com.yearplanner.data.model.PlanningPrecision
 import com.yearplanner.data.model.Project
@@ -862,18 +864,16 @@ fun TaskDetailScreen(
                             )
                             // Status badge
                             val isCompleted = occ.status == OccurrenceStatus.COMPLETED
-                            Chip(
+                            SuggestionChip(
                                 onClick = { },
-                                label = { 
-                                    Text(if (isCompleted) "[DONE] Completed" else "[PENDING] Pending")
+                                label = { Text(if (isCompleted) "Completed" else "Pending") },
+                                icon = {
                                     Icon(
                                         if (isCompleted) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
-                                        contentDescription = ""
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
                                     )
-                                },
-                                colors = ChipDefaults.chipColors(
-                                    containerColor = if (isCompleted) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
-                                )
+                                }
                             )
                         }
                         
@@ -903,7 +903,7 @@ fun TaskDetailScreen(
                                     icon = Icons.Default.Flag,
                                     label = "Deadline",
                                     value = deadlineStr.format(DateTimeFormatter.ofPattern("MMM d")),
-                                    isOverdue = occ.deadlineDate!! < System.currentTimeMillis() && !isCompleted
+                                    isOverdue = occ.deadlineDate < System.currentTimeMillis() && !isCompleted
                                 )
                             }
                         }
@@ -1037,7 +1037,7 @@ fun RadioOption(label: String, mode: ThemeMode, current: ThemeMode, onSelect: (T
 
 @Composable
 fun InfoChip(
-    icon: androidx.compose.ui.res.Painter,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
     value: String,
     isOverdue: Boolean = false
@@ -1052,7 +1052,7 @@ fun InfoChip(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Icon(icon, contentDescription = "", tint = textColor)
+        Icon(icon, contentDescription = "", tint = textColor, modifier = Modifier.size(16.dp))
         Column {
             Text(label, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(value, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = textColor)
@@ -1126,6 +1126,177 @@ fun CreateProjectDialog(
                 enabled = name.isNotBlank()
             ) {
                 Text("Create")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
+fun MonthSummaryCard(
+    month: Int,
+    year: Int,
+    summary: MonthSummary?,
+    onClick: () -> Unit
+) {
+    val monthName = java.time.Month.of(month).getDisplayName(TextStyle.FULL, Locale.getDefault())
+    val total = summary?.totalTasks ?: 0
+    val completed = summary?.completedTasks ?: 0
+    val progress = if (total > 0) completed.toFloat() / total else 0f
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(monthName, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "$completed / $total tasks",
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+                progress = progress,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+fun QuickAddDialog(
+    preselectedMonth: Int?,
+    preselectedYear: Int?,
+    projects: List<Project>,
+    onDismiss: () -> Unit,
+    onSave: (title: String, notes: String, projectId: String?, priority: Int, dateMillis: Long?, month: Int?, year: Int?, precision: PlanningPrecision) -> Unit
+) {
+    var title by remember { mutableStateOf("") }
+    var notes by remember { mutableStateOf("") }
+    var selectedProjectId by remember { mutableStateOf(projects.firstOrNull()?.id) }
+    var selectedPriority by remember { mutableIntStateOf(1) }
+    var dateMode by remember { mutableStateOf(if (preselectedMonth != null) "MONTH" else "TODAY") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add New Task", fontWeight = FontWeight.Bold) },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Task Title *") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    label = { Text("Notes (optional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 3
+                )
+
+                if (projects.isNotEmpty()) {
+                    Text("Project:", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        projects.take(4).forEach { project ->
+                            FilterChip(
+                                selected = selectedProjectId == project.id,
+                                onClick = { selectedProjectId = project.id },
+                                label = { Text(project.name, fontSize = 12.sp) }
+                            )
+                        }
+                    }
+                }
+
+                Text("Priority:", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    listOf(1 to "Low", 2 to "Medium", 3 to "High").forEach { (pri, label) ->
+                        FilterChip(
+                            selected = selectedPriority == pri,
+                            onClick = { selectedPriority = pri },
+                            label = { Text(label, fontSize = 12.sp) }
+                        )
+                    }
+                }
+
+                Text("Schedule For:", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    FilterChip(
+                        selected = dateMode == "TODAY",
+                        onClick = { dateMode = "TODAY" },
+                        label = { Text("Today") }
+                    )
+                    FilterChip(
+                        selected = dateMode == "TOMORROW",
+                        onClick = { dateMode = "TOMORROW" },
+                        label = { Text("Tomorrow") }
+                    )
+                    if (preselectedMonth != null) {
+                        FilterChip(
+                            selected = dateMode == "MONTH",
+                            onClick = { dateMode = "MONTH" },
+                            label = { Text("Month $preselectedMonth") }
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (title.isNotBlank()) {
+                        val zone = java.time.ZoneId.systemDefault()
+                        val targetDate = when (dateMode) {
+                            "TOMORROW" -> LocalDate.now().plusDays(1)
+                            else -> LocalDate.now()
+                        }
+                        val millis = if (dateMode == "MONTH") null else targetDate.atStartOfDay(zone).toInstant().toEpochMilli()
+                        val precision = if (dateMode == "MONTH") PlanningPrecision.MONTH else PlanningPrecision.DAY
+
+                        onSave(
+                            title,
+                            notes,
+                            selectedProjectId,
+                            selectedPriority,
+                            millis,
+                            preselectedMonth ?: targetDate.monthValue,
+                            preselectedYear ?: targetDate.year,
+                            precision
+                        )
+                    }
+                },
+                enabled = title.isNotBlank()
+            ) {
+                Text("Add Task")
             }
         },
         dismissButton = {

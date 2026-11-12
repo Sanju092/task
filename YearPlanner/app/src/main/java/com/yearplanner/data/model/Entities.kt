@@ -89,7 +89,8 @@ data class TaskOccurrence(
     val version: Int = 1,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
-    val title: String = ""
+    val title: String = "",
+    val notes: String = ""
 )
 
 @Serializable
