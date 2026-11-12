@@ -13,3 +13,4 @@
     android:widgetCategory="home_screen|keyguard"
     android:previewImage="@drawable/widget_analytics_preview"
     android:description="@string/widget_analytics_description" />
+

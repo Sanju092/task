@@ -19,3 +19,4 @@ object WidgetUpdater {
         } catch (_: Exception) {}
     }
 }
+
