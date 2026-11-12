@@ -18,7 +18,6 @@ Thumbs.db
 
 # Local configuration
 local.properties
-gradle.properties
 
 # Logs
 *.log
