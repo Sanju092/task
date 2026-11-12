@@ -1,9 +1,9 @@
 [versions]
 agp = "8.5.0"
 kotlin = "1.9.23"
-compileSdk = 34
-minSdk = 26
-targetSdk = 34
+compileSdk = "34"
+minSdk = "26"
+targetSdk = "34"
 coreKtx = "1.12.0"
 lifecycle = "2.7.0"
 room = "2.6.1"
