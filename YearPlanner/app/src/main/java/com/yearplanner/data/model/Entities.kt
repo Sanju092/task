@@ -164,7 +164,15 @@ enum class WidgetKind {
     TODAY,
     YEAR_OVERVIEW,
     YEAR_AGENDA,
-    ANALYTICS
+    ANALYTICS;
+
+    val displayName: String
+        get() = when (this) {
+            TODAY -> "Today"
+            YEAR_OVERVIEW -> "Year Overview"
+            YEAR_AGENDA -> "Year Agenda"
+            ANALYTICS -> "Analytics"
+        }
 }
 
 @Serializable

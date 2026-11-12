@@ -212,6 +212,10 @@ interface TaskOccurrenceDao {
 
     @Query("DELETE FROM task_occurrences WHERE seriesId = :seriesId")
     suspend fun deleteBySeriesId(seriesId: String): Int
+
+    // NEW: Get all occurrences for streak calculation
+    @Query("SELECT * FROM task_occurrences WHERE status != 'CANCELLED' ORDER BY plannedDate ASC")
+    fun getAll(): Flow<List<TaskOccurrence>>
 }
 
 @Dao

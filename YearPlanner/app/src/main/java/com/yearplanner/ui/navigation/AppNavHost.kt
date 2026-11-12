@@ -138,6 +138,35 @@ fun AppNavHost(viewModel: MainViewModel) {
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
+                // NEW: Widget configuration screen
+                composable("widget_config") {
+                    WidgetConfigScreen(
+                        viewModel = viewModel,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
+                // NEW: Day detail screen (tapped from heatmap)
+                composable("day_detail?year={year}&month={month}&day={day}") { backStackEntry ->
+                    val year = backStackEntry.arguments?.getString("year")?.toIntOrNull() ?: java.time.Year.now().value
+                    val month = backStackEntry.arguments?.getString("month")?.toIntOrNull() ?: java.time.MonthDay.now().monthValue
+                    val day = backStackEntry.arguments?.getString("day")?.toIntOrNull() ?: 1
+                    DayDetailScreen(
+                        year = year,
+                        month = month,
+                        day = day,
+                        viewModel = viewModel,
+                        onNavigate = { dest -> navController.navigate(dest) },
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
+                // NEW: Analytics detail screen
+                composable("analytics") {
+                    AnalyticsScreen(
+                        viewModel = viewModel,
+                        onNavigate = { dest -> navController.navigate(dest) },
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }

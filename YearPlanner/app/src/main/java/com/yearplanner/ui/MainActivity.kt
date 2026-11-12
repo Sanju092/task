@@ -75,15 +75,20 @@ class MainViewModel @Inject constructor(
     var selectedYear: Int = java.time.Year.now().value
     var selectedMonth: Int = java.time.MonthDay.now().monthValue
     var selectedOccurrenceId: String? = null
-
+    
     val themeMode = mutableStateOf(ThemeMode.SYSTEM)
     val showQuickAddDialog = mutableStateOf(false)
     val quickAddMonth = mutableStateOf<Int?>(null)
     val quickAddYear = mutableStateOf<Int?>(null)
 
+    // Streak tracking
+    var currentStreak: Int = 0
+    var longestStreak: Int = 0
+
     init {
         viewModelScope.launch {
             taskUseCases.seedIfNeeded()
+            calculateStreaks()
             WidgetUpdater.updateAllWidgets(context)
         }
     }
@@ -111,6 +116,7 @@ class MainViewModel @Inject constructor(
     fun toggleOccurrence(occurrenceId: String) {
         viewModelScope.launch {
             taskUseCases.toggleOccurrenceCompletion(occurrenceId)
+            calculateStreaks()
             WidgetUpdater.updateAllWidgets(context)
         }
     }
@@ -118,8 +124,23 @@ class MainViewModel @Inject constructor(
     fun deleteOccurrence(occurrenceId: String, onDone: () -> Unit = {}) {
         viewModelScope.launch {
             taskUseCases.deleteOccurrence(occurrenceId)
+            calculateStreaks()
             WidgetUpdater.updateAllWidgets(context)
             onDone()
+        }
+    }
+
+    fun snoozeOccurrence(occurrenceId: String, minutes: Int) {
+        viewModelScope.launch {
+            taskUseCases.snoozeOccurrence(occurrenceId, minutes)
+            WidgetUpdater.updateAllWidgets(context)
+        }
+    }
+
+    fun rescheduleOccurrence(occurrenceId: String, target: String) {
+        viewModelScope.launch {
+            taskUseCases.rescheduleOccurrence(occurrenceId, target)
+            WidgetUpdater.updateAllWidgets(context)
         }
     }
 
@@ -155,6 +176,7 @@ class MainViewModel @Inject constructor(
                 deadlineDate = finalDateMillis,
                 zoneId = zone.id
             )
+            calculateStreaks()
             WidgetUpdater.updateAllWidgets(context)
         }
     }
@@ -169,6 +191,7 @@ class MainViewModel @Inject constructor(
     fun loadSampleData() {
         viewModelScope.launch {
             taskUseCases.seedSampleData()
+            calculateStreaks()
             WidgetUpdater.updateAllWidgets(context)
         }
     }
@@ -176,7 +199,25 @@ class MainViewModel @Inject constructor(
     fun clearAllData() {
         viewModelScope.launch {
             taskUseCases.clearAllData()
+            currentStreak = 0
+            longestStreak = 0
             WidgetUpdater.updateAllWidgets(context)
+        }
+    }
+
+    fun exportData(format: String) {
+        viewModelScope.launch {
+            taskUseCases.exportData(format)
+        }
+    }
+
+    private fun calculateStreaks() {
+        viewModelScope.launch {
+            try {
+                val (current, longest) = taskUseCases.calculateStreaks()
+                currentStreak = current
+                longestStreak = longest
+            } catch (_: Exception) {}
         }
     }
 }

@@ -8,9 +8,12 @@
     android:minResizeHeight="100dp"
     android:targetCellWidth="4"
     android:targetCellHeight="2"
+    android:maxResizeWidth="520dp"
+    android:maxResizeHeight="300dp"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="1800000"
+    android:updatePeriodMillis="0"
     android:widgetCategory="home_screen|keyguard"
+    android:configure="com.yearplanner.widget.config.WidgetConfigureActivity"
     android:previewImage="@drawable/widget_analytics_preview"
-    android:description="@string/widget_analytics_description" />
-
+    android:description="@string/widget_analytics_description"
+    android:widgetFeatures="reconfigurable|configuration_optional" />

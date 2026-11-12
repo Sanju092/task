@@ -92,6 +92,9 @@ class TaskUseCases(private val repository: TaskRepository) {
     fun getOccurrencesByStatus(status: OccurrenceStatus): Flow<List<TaskOccurrence>> = repository.getOccurrencesByStatus(status)
     fun getTodayTasks(): Flow<List<TaskOccurrence>> = repository.getTodayTasks()
     fun getYearSummary(year: Int): Flow<YearSummary> = repository.getYearSummary(year)
+    
+    // New: Get all occurrences for streak calculation
+    fun getAllOccurrences(): Flow<List<TaskOccurrence>> = repository.getAllOccurrences()
 
     suspend fun createOccurrence(
         taskId: String,
@@ -174,6 +177,123 @@ class TaskUseCases(private val repository: TaskRepository) {
         val projects = repository.getAllProjects().first()
         for (proj in projects) {
             repository.deleteProject(proj.id)
+        }
+    }
+
+    // NEW: Snooze occurrence
+    suspend fun snoozeOccurrence(occurrenceId: String, minutes: Int): Boolean {
+        val occurrence = repository.getOccurrence(occurrenceId).first() ?: return false
+        val currentPlanned = occurrence.plannedDate ?: System.currentTimeMillis()
+        val newPlanned = currentPlanned + (minutes * 60 * 1000L)
+        
+        val updated = occurrence.copy(
+            plannedDate = newPlanned,
+            deadlineDate = if (occurrence.deadlineDate != null) newPlanned else null,
+            version = occurrence.version + 1,
+            updatedAt = System.currentTimeMillis()
+        )
+        repository.updateOccurrence(updated)
+        
+        // Reschedule reminders
+        repository.disableRemindersByOccurrence(occurrenceId)
+        val reminder = Reminder(
+            occurrenceId = occurrenceId,
+            requestedLocalDateTime = newPlanned,
+            zoneId = java.time.ZoneId.systemDefault().id,
+            resolvedInstant = newPlanned,
+            precisionMode = ReminderPrecision.INEXACT
+        )
+        repository.insertReminder(reminder)
+        
+        return true
+    }
+
+    // NEW: Reschedule occurrence
+    suspend fun rescheduleOccurrence(occurrenceId: String, target: String): Boolean {
+        val occurrence = repository.getOccurrence(occurrenceId).first() ?: return false
+        val zone = java.time.ZoneId.systemDefault()
+        val now = java.time.LocalDateTime.now(zone)
+        val newDate = when (target) {
+            "tomorrow" -> now.plusDays(1).withHour(9).withMinute(0)
+            "next_week" -> now.plusWeeks(1).with(java.time.temporal.TemporalAdjusters.next(java.time.DayOfWeek.MONDAY)).withHour(9).withMinute(0)
+            else -> now.plusDays(1).withHour(9).withMinute(0)
+        }
+        val newMillis = newDate.atZone(zone).toInstant().toEpochMilli()
+        
+        val updated = occurrence.copy(
+            plannedDate = newMillis,
+            deadlineDate = if (occurrence.deadlineDate != null) newMillis else null,
+            version = occurrence.version + 1,
+            updatedAt = System.currentTimeMillis()
+        )
+        repository.updateOccurrence(updated)
+        
+        // Reschedule reminders
+        repository.disableRemindersByOccurrence(occurrenceId)
+        val reminder = Reminder(
+            occurrenceId = occurrenceId,
+            requestedLocalDateTime = newMillis,
+            zoneId = zone.id,
+            resolvedInstant = newMillis,
+            precisionMode = ReminderPrecision.INEXACT
+        )
+        repository.insertReminder(reminder)
+        
+        return true
+    }
+
+    // NEW: Streak calculation
+    suspend fun calculateStreaks(): Pair<Int, Int> {
+        val allTasks = repository.getAllOccurrences().first()
+        val completedDates = allTasks
+            .filter { it.status == OccurrenceStatus.COMPLETED && it.completedAt != null }
+            .map { java.time.Instant.ofEpochMilli(it.completedAt!!).atZone(java.time.ZoneId.systemDefault()).toLocalDate() }
+            .distinct()
+            .sortedDescending()
+        
+        if (completedDates.isEmpty()) return Pair(0, 0)
+        
+        var currentStreak = 0
+        var longestStreak = 0
+        var tempStreak = 1
+        var prevDate = completedDates.first()
+        
+        // Current streak (from today backwards)
+        val today = java.time.LocalDate.now(java.time.ZoneId.systemDefault())
+        if (completedDates.contains(today) || completedDates.contains(today.minusDays(1))) {
+            for (date in completedDates) {
+                if (date == today || date == prevDate.minusDays(1)) {
+                    currentStreak++
+                    prevDate = date
+                } else {
+                    break
+                }
+            }
+        }
+        
+        // Longest streak
+        prevDate = completedDates.first()
+        for (i in 1 until completedDates.size) {
+            val date = completedDates[i]
+            if (date == prevDate.minusDays(1)) {
+                tempStreak++
+            } else {
+                longestStreak = maxOf(longestStreak, tempStreak)
+                tempStreak = 1
+            }
+            prevDate = date
+        }
+        longestStreak = maxOf(longestStreak, tempStreak)
+        
+        return Pair(currentStreak, longestStreak)
+    }
+
+    // NEW: Export data
+    suspend fun exportData(format: String) {
+        if (format == "json") {
+            repository.exportToJson()
+        } else if (format == "csv") {
+            repository.exportToCsv()
         }
     }
 
