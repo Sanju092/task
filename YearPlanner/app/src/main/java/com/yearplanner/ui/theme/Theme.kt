@@ -307,7 +307,6 @@ fun ElevatedCard(
     colors: androidx.compose.material3.CardColors = CardDefaults.elevatedCardColors(),
     elevation: androidx.compose.material3.CardElevation = CardDefaults.elevatedCardElevation(),
     shape: androidx.compose.ui.graphics.Shape = CardDefaults.elevatedShape,
-    border: androidx.compose.foundation.BorderStroke? = null,
     content: @Composable () -> Unit
 ) {
     androidx.compose.material3.ElevatedCard(
@@ -315,7 +314,6 @@ fun ElevatedCard(
         colors = colors,
         elevation = elevation,
         shape = shape,
-        border = border,
         content = { content() }
     )
 }

@@ -851,6 +851,7 @@ fun TaskDetailScreen(
                 // Header card with status and key info
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        val isCompleted = occ.status == OccurrenceStatus.COMPLETED
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -863,7 +864,6 @@ fun TaskDetailScreen(
                                 maxLines = 2
                             )
                             // Status badge
-                            val isCompleted = occ.status == OccurrenceStatus.COMPLETED
                             SuggestionChip(
                                 onClick = { },
                                 label = { Text(if (isCompleted) "Completed" else "Pending") },

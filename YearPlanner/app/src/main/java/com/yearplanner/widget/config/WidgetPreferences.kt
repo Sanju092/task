@@ -165,6 +165,14 @@ class WidgetPreferences(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it[AGENDA_MAX_TASKS] = value.coerceIn(3, 20) }
     }
 
+    suspend fun getAgendaShowCompleted(appWidgetId: Int): Boolean {
+        return dataStore.data.map { it[AGENDA_SHOW_COMPLETED] ?: false }.first()
+    }
+
+    suspend fun setAgendaShowCompleted(appWidgetId: Int, value: Boolean) {
+        dataStore.edit { it[AGENDA_SHOW_COMPLETED] = value }
+    }
+
     suspend fun getAgendaSortOrder(appWidgetId: Int): String {
         return dataStore.data.map { it[AGENDA_SORT_ORDER] ?: "date" }.first()
     }
